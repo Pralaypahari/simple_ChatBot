@@ -3,6 +3,15 @@ import requests
 
 st.title("chat_bot")
 
+with st.sidebar:
+    st.subheader("previous chat")
+    threads = requests.get(
+        url = "http://localhost:8000/chat/threads"
+    ).json()
+
+    for thread in threads:
+        st.button(thread)
+
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -20,11 +29,11 @@ if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     response = requests.post(
-        url ="http://127.0.0.1:8000/chat",
+        url ="http://127.0.0.1:8000/chat/1",
         params ={
             "message": prompt
         }
-    ).json()["messages"]
+    ).json()["messages"][-1]["content"]
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
         st.markdown(response)
