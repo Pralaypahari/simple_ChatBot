@@ -97,8 +97,9 @@ for msg in st.session_state.messages:
         with st.chat_message("user"):
             st.markdown(msg["content"])
     elif role == "ai":
-        with st.chat_message("assistant"):
-            st.markdown(msg["content"])
+        if msg["content"]:
+            with st.chat_message("assistant"):
+                st.markdown(msg["content"])
     # elif role == "system":
     #     with st.chat_message("system"):
     #         st.write(msg["content"])

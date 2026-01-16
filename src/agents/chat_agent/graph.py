@@ -19,6 +19,5 @@ def create_chat_agent_graph() -> CompiledStateGraph:
     graph_builder.add_edge(START, "chat_node")
     graph_builder.add_conditional_edges("chat_node", should_continue)
     graph_builder.add_edge("tool_executor_node", "chat_node")
-    graph_builder.add_edge("chat_node", END)
 
     return graph_builder.compile(checkpointer = checkpointer)

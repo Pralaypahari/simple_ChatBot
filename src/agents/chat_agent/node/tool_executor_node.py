@@ -1,9 +1,11 @@
 from src.agents.chat_agent.states.chat_agent_state import ChatAgentState
 from src.agents.chat_agent.tools.date_time import get_current_date_and_time
+from src.agents.chat_agent.tools.web_search_tool import web_search, search_the_web
 from langchain.messages import ToolMessage
 
 tools = [
-    get_current_date_and_time
+    get_current_date_and_time,
+    search_the_web
 ]
 
 tools_by_name = {tool.name: tool for tool in tools}

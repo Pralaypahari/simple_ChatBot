@@ -2,7 +2,7 @@ from typing import Literal
 from langgraph.graph import END
 from src.agents.chat_agent.states.chat_agent_state import ChatAgentState
 
-def should_continue(state: ChatAgentState) -> ChatAgentState:
+def should_continue(state: ChatAgentState) -> Literal["tool_executor_node", END]:
     """
     decide if we should continue the loop or stop based upon whether the LLM made a tool call
     """
