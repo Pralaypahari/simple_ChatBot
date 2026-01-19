@@ -2,6 +2,7 @@ from src.agents.chat_agent.graph import create_chat_agent_graph
 from langchain.messages import HumanMessage, AnyMessage
 from src.agents.chat_agent.states.chat_agent_state import ChatAgentState
 from src.agents.chat_agent.graph import create_chat_agent_graph
+from typing import Iterator
 
 graph = create_chat_agent_graph()
 
@@ -22,6 +23,23 @@ def chat_handler(thread_id: str, message: str) -> ChatAgentState:
             }
         }
     )
+
+def chat_stream_handler(thread_id: str, message: str) -> Iterator[str]:
+    """
+    """
+    for chunk, metadata in graph.stream(
+        input = {
+            "messages": [HumanMessage(content = message)]
+        },
+        config = {
+            "configurable": {
+                "thread_id": thread_id
+            }
+        },
+        stream_mode="messages"
+    ):
+        yield chunk.content
+
 
 def get_all_threads_handler() -> list[str]:
     """
