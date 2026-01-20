@@ -9,7 +9,6 @@ BASE_URL = "http://localhost:8000"
 st.set_page_config(layout="wide")
 
 # ------------------ Helpers ------------------
-
 def new_thread_id():
     return f"thread-{uuid.uuid4().hex[:8]}"
 
@@ -35,6 +34,28 @@ def send_message(thread_id, message):
     r.raise_for_status()
     return r.json()["messages"]
 
+def stream_message(thread_id, message):
+    r = requests.post(
+        url=f"{BASE_URL}/stream/{thread_id}",
+        params={"message": message},
+        stream=True
+    )
+    r.raise_for_status()
+    return r.iter_content(chunk_size=1024)
+
+def stream_and_render(thread_id, message):
+    chunks = stream_message(thread_id, message)
+
+    placeholder = st.chat_message("assistant").empty()
+    full_text = ""
+
+    for chunk in chunks:
+        if chunk:
+            token = chunk.decode("utf-8")
+            full_text += token
+            placeholder.markdown(full_text)
+
+    return full_text
 # ------------------ Session State ------------------
 
 if "current_thread" not in st.session_state:
@@ -48,6 +69,14 @@ if "messages" not in st.session_state:
 st.sidebar.title("🧵 Threads")
 
 threads = get_threads()
+
+if "stream_enabled" not in st.session_state:
+    st.session_state.stream_enabled = True
+
+st.session_state.stream_enabled = st.sidebar.toggle(
+    " Stream response",
+    value=st.session_state.stream_enabled
+)
 
 # Case 1: No threads exist
 if not threads:
@@ -109,19 +138,30 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("Type a message")
 
 if user_input:
-    # Optimistic UI update
     st.session_state.messages.append({
         "type": "human",
         "content": user_input
     })
 
-    # Call backend
-    updated_messages = send_message(
-        st.session_state.current_thread,
-        user_input
-    )
+    if st.session_state.stream_enabled:
+        assistant_reply = stream_and_render(
+            st.session_state.current_thread,
+            user_input
+        )
 
-    st.session_state.messages = updated_messages
+        st.session_state.messages.append({
+            "type": "ai",
+            "content": assistant_reply
+        })
+
+    else:
+        updated_messages = send_message(
+            st.session_state.current_thread,
+            user_input
+        )
+
+        st.session_state.messages = updated_messages
+
     st.rerun()
 
 
