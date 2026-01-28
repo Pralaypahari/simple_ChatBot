@@ -1,5 +1,5 @@
 from langgraph.checkpoint.postgres import PostgresSaver
-from psycopg.pool import ConnectionPool
+from psycopg_pool import ConnectionPool
 from typing import Optional
 
 class DatabaseManager:

@@ -4,10 +4,10 @@ from src.agents.chat_agent.node.should_continue import should_continue
 from src.agents.chat_agent.node.tool_executor_node import tool_executor
 from langgraph.graph import START, END, StateGraph
 from langgraph.graph.state import CompiledStateGraph
-from services.database_services import db_manager
+from src.services.database_services import db_manager
 
 
-def create_chat_agent_graph(checkpointer) -> CompiledStateGraph:
+def create_chat_agent_graph() -> CompiledStateGraph:
     """
     """
     graph_builder = StateGraph(ChatAgentState)

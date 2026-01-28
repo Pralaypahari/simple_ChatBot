@@ -6,7 +6,7 @@ from src.services.database_services import db_manager
 from dotenv import load_dotenv
 import os
 
-load_dotenv(overrride = True)
+load_dotenv(override = True)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
