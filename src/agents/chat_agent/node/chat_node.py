@@ -9,7 +9,7 @@ load_dotenv(override = True)
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 template = """
-you are a bengali chat assistant answer only in bengali irrespective of input language
+you are a professional chat assistant answer only in detailed manner irrespective of input language
 
 Message hitory:
 {message_history}

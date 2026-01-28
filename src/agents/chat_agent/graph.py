@@ -4,11 +4,10 @@ from src.agents.chat_agent.node.should_continue import should_continue
 from src.agents.chat_agent.node.tool_executor_node import tool_executor
 from langgraph.graph import START, END, StateGraph
 from langgraph.graph.state import CompiledStateGraph
-from langgraph.checkpoint.memory import MemorySaver
+from services.database_services import db_manager
 
-checkpointer = MemorySaver()
 
-def create_chat_agent_graph() -> CompiledStateGraph:
+def create_chat_agent_graph(checkpointer) -> CompiledStateGraph:
     """
     """
     graph_builder = StateGraph(ChatAgentState)
@@ -19,5 +18,7 @@ def create_chat_agent_graph() -> CompiledStateGraph:
     graph_builder.add_edge(START, "chat_node")
     graph_builder.add_conditional_edges("chat_node", should_continue)
     graph_builder.add_edge("tool_executor_node", "chat_node")
+
+    checkpointer = db_manager.get_saver()
 
     return graph_builder.compile(checkpointer = checkpointer)
